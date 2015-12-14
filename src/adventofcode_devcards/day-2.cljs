@@ -8,7 +8,7 @@
 (enable-console-print!)
 
 (defn individual-dimensions->paper-size
-  [w h l]
+  [[w h l]]
   (let [wh (* w h)
         hl (* h l)
         wl (* w l)]
@@ -17,12 +17,32 @@
        (* 2 wl)
        (min wh hl wl))))
 
-(defn dimension-string->paper-size
+(defn individual-dimensions->ribbon-length
+  [[w h l]]
+  (let [wh (* 2 (+ w h))
+        hl (* 2 (+ h l))
+        wl (* 2 (+ w l))]
+    (+ (min wh hl wl) ; Perimeter of smallest face
+       (* w h l))))   ; + Ribbon length
+
+(defn dimension-string->individual-dimensions
   [d]
   (->> d
        (re-seq #"\d+")
        (map int)
-       (apply individual-dimensions->paper-size)))
+       vec))
+
+(defn dimension-string->paper-size
+  [d]
+  (->> d
+       dimension-string->individual-dimensions
+       individual-dimensions->paper-size))
+
+(defn dimension-string->ribbon-length
+  [d]
+  (->> d
+       dimension-string->individual-dimensions
+       individual-dimensions->ribbon-length))
 
 (defn dimensions->paper-size
   [ds]
@@ -30,6 +50,14 @@
        clojure.string/split-lines
        (map dimension-string->paper-size)
        (reduce +)))
+
+(defn dimensions->ribbon-length
+  [ds]
+  (->> ds
+       clojure.string/split-lines
+       (map dimension-string->ribbon-length)
+       (reduce +)))
+
 
 (def input
   "29x13x26
@@ -1047,6 +1075,19 @@
     "Test sequence"
     (is (= (+ 58 43) (dimensions->paper-size "2x3x4\n1x1x10")))))
 
-
 (defcard part-1-result
   (dimensions->paper-size input))
+
+(deftest part-2-tests
+  (testing
+    "A present with dimensions 2x3x4 requires 2+2+3+3 = 10 feet of ribbon to wrap the present plus 2*3*4 = 24 feet of ribbon for the bow, for a total of 34 feet."
+    (is (= 34 (dimension-string->ribbon-length "2x3x4"))))
+  (testing
+    "A present with dimensions 1x1x10 requires 1+1+1+1 = 4 feet of ribbon to wrap the present plus 1*1*10 = 10 feet of ribbon for the bow, for a total of 14 feet."
+    (is (= 14 (dimension-string->ribbon-length "1x1x10"))))
+  (testing
+    "Test sequence"
+    (is (= (+ 34 14) (dimensions->ribbon-length "2x3x4\n1x1x10")))))
+
+(defcard part-2-result
+  (dimensions->ribbon-length input))
