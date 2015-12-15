@@ -25,34 +25,29 @@
     (+ (min wh hl wl) ; Perimeter of smallest face
        (* w h l))))   ; + Ribbon length
 
-(defn dimension-string->individual-dimensions
-  [d]
+(defn dimension-string->individual-dimensions [d]
   (->> d
        (re-seq #"\d+")
        (map int)
        vec))
 
-(defn dimension-string->paper-size
-  [d]
+(defn dimension-string->paper-size [d]
   (->> d
        dimension-string->individual-dimensions
        individual-dimensions->paper-size))
 
-(defn dimension-string->ribbon-length
-  [d]
+(defn dimension-string->ribbon-length [d]
   (->> d
        dimension-string->individual-dimensions
        individual-dimensions->ribbon-length))
 
-(defn dimensions->paper-size
-  [ds]
+(defn dimensions->paper-size [ds]
   (->> ds
        clojure.string/split-lines
        (map dimension-string->paper-size)
        (reduce +)))
 
-(defn dimensions->ribbon-length
-  [ds]
+(defn dimensions->ribbon-length [ds]
   (->> ds
        clojure.string/split-lines
        (map dimension-string->ribbon-length)

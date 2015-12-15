@@ -12,24 +12,20 @@
 (def EAST ">")
 (def WEST "<")
 
-(defn split
-  [x]
+(defn split [x]
   (re-seq #"[\^v<>]" x))
 
-(defn dir->vector
-  [x]
+(defn dir->vector [x]
   (condp = x
     NORTH [0 1]
     SOUTH [0 -1]
     EAST [1 0]
     WEST [-1 0]))
 
-(defn apply-movement
-  [current-pos m]
+(defn apply-movement [current-pos m]
   (vec (map + current-pos (dir->vector m))))
 
-(defn instructions->pos-counts
-  [in]
+(defn instructions->pos-counts [in]
   (->> in
        (reduce
         (fn [acc [santa-idx v]]

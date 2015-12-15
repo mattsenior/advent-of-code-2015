@@ -7,26 +7,22 @@
 
 (enable-console-print!)
 
-(defn bracket->int
-  [s]
+(defn bracket->int [s]
   (condp = s
     "(" 1
     ")" -1))
 
-(defn string-seq->ints
-  [s]
+(defn string-seq->ints [s]
   (->> s
        (re-seq #"[\(\)]")
        (map bracket->int)))
 
-(defn take-lift
-  [s]
+(defn take-lift [s]
   (->> s
        string-seq->ints
        (reduce +)))
 
-(defn get-basement-position
-  [s]
+(defn get-basement-position [s]
   (->> s
        string-seq->ints
        (reductions +)
