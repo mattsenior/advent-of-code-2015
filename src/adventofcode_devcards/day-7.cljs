@@ -551,7 +551,6 @@ x RSHIFT 2 -> y
 fq OR fr -> fs
 bn RSHIFT 5 -> bq
 0 -> c
-956 -> b
 d OR j -> k
 z OR aa -> ab
 gf OR ge -> gg
@@ -802,12 +801,27 @@ NOT p -> q
 k AND m -> n
 as RSHIFT 2 -> at")
 
-(defcard part-1-result
-  (let [results (run-circuit input-1)]
-    (go
-      (pr (<! (:a results))))))
+(defonce part-1-result-atom
+  (let [a (atom)
+        results (run-circuit input-1)]
+    (take! (:a results) #(reset! a %))
+    a))
 
-(defcard part-2-result
-  (let [results (run-circuit input-2)]
+(defcard part-1-result part-1-result-atom)
+  #_(let [results (run-circuit input-1)]
     (go
-      (pr (<! (:a results))))))
+      (pr (<! (:a results)))))
+
+(defonce part-2-result-atom
+  (let [a (atom)]
+    (go
+      (let [results1 (run-circuit input-1)
+            ; Get "a" result from first circuit
+            a1 (<! (:a results1))
+            ; Feed this result as "b" in input-2
+            input-2 (str input-2 "\n" a1 " -> b")
+            results2 (run-circuit input-2)]
+        (take! (:a results2) #(reset! a %))))
+    a))
+
+(defcard part-2-result part-2-result-atom)
