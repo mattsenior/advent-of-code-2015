@@ -808,9 +808,6 @@ as RSHIFT 2 -> at")
     a))
 
 (defcard part-1-result part-1-result-atom)
-  #_(let [results (run-circuit input-1)]
-    (go
-      (pr (<! (:a results)))))
 
 (defonce part-2-result-atom
   (let [a (atom)]
