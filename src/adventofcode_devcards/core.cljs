@@ -7,7 +7,9 @@
    [adventofcode-devcards.day-4]
    [adventofcode-devcards.day-5]
    [adventofcode-devcards.day-6]
-   [adventofcode-devcards.day-7]))
+   [adventofcode-devcards.day-7]
+   [adventofcode-devcards.day-8]
+   ))
 
 (defn main []
   ;; conditionally start the app based on wether the #main-app-area
