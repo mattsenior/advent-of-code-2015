@@ -35,7 +35,8 @@
 
 (def valid? (every-pred correct-length?
                         has-straight?
-                        valid-characters?))
+                        valid-characters?
+                        has-pairs?))
 
 ;; Password sequences
 
@@ -60,6 +61,9 @@
 (defn passwords [x]
   (let [y (inc-password x)]
     (lazy-seq (cons x (passwords y)))))
+
+(defn valid-passwords [x]
+  (->> x passwords (filter valid?)))
 
 (deftest part-1-tests
   (testing "str->pw"
@@ -94,14 +98,15 @@
     (is (= true (has-pairs? (str->pw "aabcc"))))
     (is (= false (has-pairs? (str->pw "aabaa")))))
   (testing "valid?"
-    (is (valid? (str->pw "xxabcxxx"))))
+    (is (valid? (str->pw "xxabcxyy"))))
   (testing "Part 1"
     (is (= "y" (->> "x" str->pw passwords second pw->str)))
     (is (= "xy" (->> "xx" str->pw passwords second pw->str)))
     (is (= "xz" (->> "xy" str->pw passwords second pw->str)))
     (is (= "ya" (->> "xz" str->pw passwords second pw->str)))
     (is (= "xxxxxxxy" (->> "xxxxxxxx" str->pw passwords second pw->str)))
+    (is (= ["xxxxxxxy" "xxxxxxxz"] (->> "xxxxxxxx" str->pw passwords (map pw->str) (drop 1) (take 2))))
+    (is (= ["xxxxyzaa" "xxxxyzbb"] (->> "xxxxxxxx" str->pw valid-passwords (map pw->str) (drop 1) (take 2))))
     ))
 
-#_(defcard part-1-result (count (nth (look-and-say [1 3 2 1 1 3 1 1 1 2]) 40)))
-#_(defcard part-2-result (count (nth (look-and-say [1 3 2 1 1 3 1 1 1 2]) 50)))
+(defcard results (->> "hxbxwxba" str->pw valid-passwords (map pw->str) (take 2)))
