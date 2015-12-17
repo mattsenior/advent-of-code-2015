@@ -12,6 +12,7 @@
    [adventofcode-devcards.day-9]
    [adventofcode-devcards.day-10]
    [adventofcode-devcards.day-11]
+   [adventofcode-devcards.day-12]
    ))
 
 (defn main []
