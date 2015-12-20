@@ -58,8 +58,12 @@ David would gain 41 happiness units by sitting next to Carol.")
 
 (defn add-self [opinions]
   (let [people (keys opinions)]
-    ;; Continue here
-    opinions))
+    (reduce (fn [acc person]
+              (-> acc
+                  (assoc-in [person :self] 0)
+                  (assoc-in [:self person] 0)))
+            opinions
+            people)))
 
 (defn get-winning-arrangement [comparator opinions]
   (let [nodes (keys opinions)
@@ -76,4 +80,5 @@ David would gain 41 happiness units by sitting next to Carol.")
 
 #_(defcard part-1-result (get-happiest-arrangement (lines->opinions input)))
 
-(defcard part-2-result (get-happiest-arrangement (->> test-input lines->opinions add-self)))
+#_(defcard part-2-people (->> input lines->opinions add-self))
+#_(defcard part-2-result (get-happiest-arrangement (->> input lines->opinions add-self)))
