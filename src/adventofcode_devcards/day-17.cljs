@@ -18,21 +18,30 @@
 (defn lines->containers [lines]
   (->> lines clojure.string/split-lines (map int)))
 
-(defn a [target path nodes]
-  (mapcat (fn [[k v]]
-         (let [new-target (- target v)
-               path (conj path k)
-               remaining (->> nodes
-                              (drop-while (fn [[k2 _]] (not (= k2 k))))
-                              (drop 1)
-                              (filter (fn [[_ v2]] (<= v2 new-target))))]
-           (if (empty? remaining)
-             (when (= target v) [path])
-             (a new-target path remaining)))) nodes))
+(defn get-remaining [target exclude-k nodes]
+  (let [xf (comp (drop-while (fn [[k _]] (not (= k exclude-k))))
+                 (drop 1)
+                 (filter (fn [[_ v]] (<= v target))))]
+    (sequence xf nodes)))
+
+(defn combos [target path nodes]
+  (letfn [(sub-combos [[k v]]
+            (let [new-target (- target v)
+                  path (conj path k)
+                  remaining (get-remaining new-target k nodes)]
+              (if (empty? remaining)
+                ;; There are no remaining choices, so we are on an end node.
+                ;; If it exactly matches the remaining target, return the path
+                ;; for adding to our list, else nil
+                (when (= target v) [path])
+                ;; There are still remaining choices so delve into them with
+                ;; our new target
+                (combos new-target path remaining))))]
+    (mapcat sub-combos nodes)))
 
 (defn get-combinations [target containers]
   (let [nodes (map vector (range) containers)]
-    (into [] (a target [] nodes))))
+    (combos target [] nodes)))
 
 (defn count-min [combinations]
   (let [counts (map count combinations)
