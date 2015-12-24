@@ -34,8 +34,18 @@
   (let [nodes (map vector (range) containers)]
     (into [] (a target [] nodes))))
 
+(defn count-min [combinations]
+  (let [counts (map count combinations)
+        min (apply min counts)]
+    (get (frequencies counts) min)))
+
 (deftest part-1
   (testing "Part 1"
     (is (= 4 (count (get-combinations 25 (lines->containers test-input)))))))
 
+(deftest part-2
+  (testing "Part 2"
+    (is (= 3 (count-min (get-combinations 25 (lines->containers test-input)))))))
+
 (defcard part-1-result (count (get-combinations 150 (lines->containers input))))
+(defcard part-2-result (count-min (get-combinations 150 (lines->containers input)))) 
